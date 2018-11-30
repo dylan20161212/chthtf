@@ -56,6 +56,25 @@
 			<artifactId>spring-boot-devtools</artifactId>
 			<optional>true</optional>
 		</dependency>
+		
+		<dependency>
+		    <groupId>org.liquibase</groupId>
+		    <artifactId>liquibase-core</artifactId>
+		</dependency>
+		
+	    <!--开启 cache 缓存 -->
+		<dependency>
+		    <groupId>org.springframework.boot</groupId>
+		    <artifactId>spring-boot-starter-cache</artifactId>
+		</dependency>
+	
+		<!-- ehcache缓存 -->
+		<dependency>
+		    <groupId>net.sf.ehcache</groupId>
+		    <artifactId>ehcache</artifactId>
+		    
+		</dependency>
+
 	</dependencies>
 
 	<build>

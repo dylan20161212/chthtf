@@ -8,10 +8,20 @@ spring:
     driver-class-name: com.mysql.jdbc.Driver
   jpa:
     hibernate: 
-      ddl-auto: update
+      ddl-auto: create-drop
+  cache:
+    ehcache:
+      config: classpath:ehcache.xml
 #  security:
 #    basic:
 #      enabled: false
+
+  liquibase: 
+    enabled: true 
+    change-log: classpath:/db/changelog/db.changelog-master.xml 
+    
+  
+  
 
 management:
   endpoints:
@@ -27,6 +37,7 @@ management:
   endpoint:
     health:
       show-details: always
+
 
 
  
