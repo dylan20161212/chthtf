@@ -1,0 +1,88 @@
+
+
+
+entity Organization {
+	orgName String,
+    orgCode String,
+    orgFlag String,
+    orgDescription String,
+    orgLft Long,
+    orgRgt Long,
+    orgLevel Long,
+    orgOrder Long,
+    isLeaf Boolean
+}
+
+entity Resource {
+	resRouterLink String,
+    resDescription String,
+    resFlag String,
+    resOperate String,
+    resHref String,
+    resSrc String,
+    resText String,
+    resClass String,
+    resEffDate ZonedDateTime,
+    resExpDate ZonedDateTime,
+    resLft Long,
+    resRgt Long,
+    resLevel Long,
+    resOrder Long,
+    isLeaf Boolean
+}
+
+entity Role {
+	roleName String,
+    roleDescription String,
+    roleFlag String,
+    roleEffDate ZonedDateTime,
+    roleExpDate ZonedDateTime
+}
+/**
+ * Class comments.
+ * @author The JHipster team.
+ */
+entity UserB {
+	/** A required attribute */
+	login String minlength(1) minlength(50) required,
+    password String minlength(60) minlength(60),
+    firstName String maxlength(50),
+    lastName String maxlength(50),
+    email String,
+    activated Boolean,
+    langKey String,
+    imageUrl String,
+    activationKey String,
+    resetKey String,
+    resetDate Instant
+}
+entity UserRoleOrganization (t_user_role_organization){
+	userName String,
+    roleName String,
+    orgName String
+}
+
+relationship ManyToMany {   
+	Role{resources} to Resource,
+	UserB{roles} to Role
+}
+relationship ManyToOne {
+	Resource{upper} to Resource,
+	UserB{organization} to Organization,
+    Organization{upper} to Organization
+}
+relationship OneToOne {
+    UserRoleOrganization{user(login) required} to UserB,
+    UserRoleOrganization{role(roleName) required} to Role,
+    UserRoleOrganization{organization(orgName)} to Organization
+}
+
+paginate UserB, Organization, Resource, Role, UserRoleOrganization with pagination
+
+dto * with mapstruct
+
+service all with serviceImpl
+
+/** 
+ * service all with serviceImpl except Organization, UserRoleOrganization, Resource, Role
+ */

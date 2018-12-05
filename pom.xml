@@ -51,11 +51,11 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-envers</artifactId>
         </dependency>
-		<dependency>
+		<!-- <dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
 			<optional>true</optional>
-		</dependency>
+		</dependency> -->
 		
 		<dependency>
 		    <groupId>org.liquibase</groupId>
@@ -74,6 +74,12 @@
 		    <artifactId>ehcache</artifactId>
 		    
 		</dependency>
+		
+		<!-- <dependency>
+		    <groupId>org.bsc.maven</groupId>
+		    <artifactId>maven-processor-plugin</artifactId>
+		    <version>3.3.3</version>
+		</dependency> -->
 
 	</dependencies>
 
@@ -92,11 +98,44 @@
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
+                        <encoding>UTF-8</encoding>
+		              
                 </configuration>
             </plugin>
 			
 		</plugins>
+		
+	
 	</build>
+	
+	<profiles>
+        <profile>
+            <id>apt</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.bsc.maven</groupId>
+                        <artifactId>maven-processor-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>process</id>
+                                <goals>
+                                    <goal>process</goal>
+                                </goals>
+                                <phase>generate-sources</phase>
+                                <configuration>
+                                    <outputDirectory>target/generated-sources/java</outputDirectory>
+                                    <processors>
+                                        <processor>org.adaikiss.xun.apt.XunProcessor</processor>
+                                    </processors>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 	<!-- Additional lines to be added here... -->
 

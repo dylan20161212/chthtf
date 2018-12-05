@@ -1,0 +1,21 @@
+/* 日历日程 */
+entity FullCalendar (de_full_calendar) {
+    /* 开始时间 */
+	startDate ZonedDateTime,
+	/* 结束时间 */
+	endDate ZonedDateTime,
+	/* 事件描述 */
+	eventDesc String,
+	eventLevel Long,
+	eventOrder Long,
+	/* alert before */
+	remindTime ZonedDateTime,
+	remarks String,
+	userId Long
+}
+
+paginate FullCalendar with pagination
+
+dto * with mapstruct
+
+service all with serviceImpl

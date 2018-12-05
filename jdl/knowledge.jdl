@@ -1,0 +1,76 @@
+/* 知识库目录或类别树形 */
+entity KnowledgeCatalog (knowledge_catalog) {
+	/* 知识目录或类别序号  */
+	cIndex String,
+	/* 知识目录或类别名称  */
+	cName String,
+	/* 知识库目录或类别 */
+	cContent String,
+	/* 知识库类别页数或文件数  */
+	kFiles Long,
+	/* 知识库标签用:分隔 */
+	kTags String,
+	/* 典型案例:分隔 */
+	kTypicalCase String,
+	/* 知识库作者 */
+	kAuthor String,
+	/* 知识库版本 */
+	kVersion String
+}
+
+/* 知识库 */
+entity KnowledgeBase (knowledge_base) {
+	/* （来自于字典表）知识库类型：典型案例，政策法规文件  */
+	kType String,
+	/* 知识库名称  */
+	kName String,
+	/* 知识库目录 */
+	kContent String,
+	/* 知识库附件:分隔（为了节省时间，不设计过多的多对多表） */
+	kFiles String,
+	/* 知识库标签用:分隔 */
+	kTags String,
+	/* 典型案例:分隔 */
+	kTypicalCase String,
+	/* 知识库作者 */
+	kAuthor String,
+	/* 知识库版本 */
+	kVersion String
+}
+
+/* 知识库权限控制 */
+entity KnowledgePermission (knowledge_permission) {
+	/* 知识库ID */
+	kId Long,
+	/* 知识库读写权限采用Linux三位二进制表示111表示读写执行 */
+	kPermission String,
+	/* 知识库对应的用户，角色，组织机构权限 */
+	kUserId Long,
+	/* 知识库对应的用户，角色，组织机构权限 */
+	kUserLogin String,
+	/* 知识库对应的用户，角色，组织机构权限 */
+	kRoleId Long,
+	/* 知识库对应的用户，角色，组织机构权限 */
+	kOrgId Long,
+    /* 开始时间 */
+	startDate ZonedDateTime,
+	/* 结束时间 */
+	endDate ZonedDateTime,
+	/* 知识库版本 */
+	kVersion String
+}
+
+
+relationship ManyToOne {
+	KnowledgePermission{knowlege} to KnowledgeBase,
+	KnowledgeCatalog{upper} to KnowledgeCatalog
+}
+
+
+paginate * with pagination
+
+dto * with mapstruct
+
+filter KnowledgeCatalog, KnowledgeBase
+
+service all with serviceImpl

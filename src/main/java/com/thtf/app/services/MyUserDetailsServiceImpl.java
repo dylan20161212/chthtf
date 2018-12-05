@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import com.thtf.app.domains.MyAuth;
 import com.thtf.app.domains.UserOrgnizationRole;
+import com.thtf.app.exceptions.AuthenticFaildProblome;
 import com.thtf.app.repositories.UserOrgnizationRoleRepository;
 import com.thtf.app.repositories.UserRepository;
 
@@ -38,12 +39,16 @@ public class MyUserDetailsServiceImpl implements UserDetailsService{
 	
 	
 	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException{
 		
 		
-		com.thtf.app.domains.User user = this.userRepository.findByLogin(username).orElseThrow(()->{
-			throw  new RuntimeException("user not found!",new Throwable("user not found!"));
-		});
+		com.thtf.app.domains.User user = this.userRepository.findByLogin(username).orElse(null);
+		if(user == null){
+			System.out.println("user not found !");
+		}
+//				.orElseThrow(()->{
+//			throw  new UsernameNotFoundException("user not found!");
+//		});
 		
 		List<UserOrgnizationRole> list = this.userOrgnizationRoleRepository.findByUserId(user.getId()).orElse(Collections.EMPTY_LIST);
 		

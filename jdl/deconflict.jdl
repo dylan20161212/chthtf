@@ -1,0 +1,410 @@
+
+/* 通用用户扩展信息 */
+entity UserExtend (de_user_extend) {
+	/* 姓名 */
+	name String,
+	/* 性别 */
+	gender String,
+	/* 生日 */
+	birthday ZonedDateTime,
+	/* 照片 */
+	img String,
+	/* 电话 */
+	phone String,
+	/* 证件类型 */
+	idType String,
+	/* 证号 */
+	idNumber String,
+	/* 省（居住地址） */
+	dwellsProvince String ,
+	/* 市州（居住地址） */
+	dcityState String ,
+	/* 区县（居住地址） */
+	dareaCounty String ,
+	/* 社区，街道 （居住地址）*/
+	dcommunityStreet String,
+	/* 地址详情 （居住地址）*/
+	daddress String,
+	/* 居住地址areaId */
+	dareaId Long,
+	/* 省（户籍地址） */
+	censusRegisterProvince String,
+	/* 市州（户籍地址） */
+	ccityState String,
+	/* 区县（户籍地址） */
+	careaCounty String,
+	/* 街道 （户籍地址）*/
+	ccommunityStreet String,
+	/* 户籍地址areaId */
+	careaId Long,
+	/* 调解员级别 第一位0兼职1专职第二位代表级别第三位代表A专家B非专家，01A兼职一级专家,02A,03A,040,050;11A专职一级,12A专职二级,13A,140,150;01B兼职一级,02B,03B,04B,05B */
+	mLevel String,
+	/* 调解员学历 */
+	mDegree String,
+	/* 调解员政治面貌 */
+	mPoliticsStatus String,
+	/* 调解员职务 */
+	mduty String,
+	/* UserId */
+	userId Long
+}
+
+/* 自然人法人，社会团体，其他组织 */
+entity RelevantPerson (de_relevant_person) {
+	/* （来自于字典表）申请人类型（自然人，非自然人） */
+	aType String,
+	/* （来自于字典表）申请人组别（申请人，被申请人，甲，乙，丙，丁） */
+	aGroup String,
+	/* 申请人名称（人名，法人名）  */
+	name String,
+	/* 法人，社会团体，其他组织 */
+	socialCreditType String,
+	/* 法人，社会团体，其他组织代码 */
+	socialCreditCode String,
+	/* 法人代表 */
+	legalRepresentation String,
+	/* 申请人工作单位 */
+	company String,
+	/* 申请人职业 */
+	job String,
+	/* 电话（法人或自然人） */
+	telephone String,
+	/* 性别（自然人，法人代表） */
+	gender String,
+	/* （来自于字典表）证件类型（自然人，法人代表） */
+	idType String,
+	/* 证件号码（自然人，法人代表） */
+	idNumber String,
+	/* （来自于字典表）省 */
+	wellsProvince String ,
+	/* 市州 */
+	cityState String ,
+	/* 区县 */
+	areaCounty String ,
+	/* 社区，街道  */
+	communityStreet String,
+	/* 地址详情 */
+	address String	,
+	/* （来自于字典表）areaId */
+	areaId Long,
+	/* 代理人 */
+	proxyName String,
+	/* 被代理人id */
+	principalId Long
+}
+
+/* 矛盾与纠纷案件表  */
+entity ConflictCase (de_conflict_case) {
+	/* （来自于字典表）咨询，调解，评估 */
+	cType String,
+	/* 案件发生时间 */
+	occurrenceDate ZonedDateTime,
+    /* 案件申请时间 */
+	applyDate ZonedDateTime,
+    /* 案件受理时间 */
+	acceptDate ZonedDateTime,
+	/* 结案时间 */
+	endDate ZonedDateTime,
+	/* 案件名称 */
+	cName String,
+	/* 描述  */
+	cDescription String,
+	/* 反馈方式（电话、微信、人工智能等） */
+	feedbackType String,
+	/* 反馈方式（电话、微信、人工智能等具体内容） */
+	feedbackValue String,
+	/* 信息来源（直接申请、网上申请、法院转交、公安机关转交等） */
+	infoSource String,
+	/* 我的诉求  */
+	myAppeal String,
+	/* 省（案件发生） */
+	occurProvince String,
+	/* 市州（案件发生） */
+	ocityState String,
+	/* 区县（案件发生） */
+	oareaCounty String,
+	/* 街道 （案件发生）*/
+	ocommunityStreet String,
+	/* 发生地址areaId */
+	oareaId Long,
+	/* 调节机构Id */
+	mediateOrgId Long,
+	/* 调节机构名称 */
+	mediateOrgName String,
+	/* 调节机构负责人 */
+	dutyofficerName String,
+	/* 记录人 */
+	recorderName String,
+	/* 备注 */
+	remarks String,
+	/* 案件办理状态 （案件办理过程中的状态）直接中汉字表示key和value*/
+	cStatus String,
+	/* 案件办理意见 （案件办理过程中的意见）*/
+	dealOpinion String,
+	/* 父级ID */
+	upperId Long
+}
+
+/* 矛盾与纠纷案件酬劳评定表  */
+entity CaseSalary (de_case_salary) {
+	/* （来自于字典表）分配类型,给机构的，给调解员的 */
+	sType Long,
+	/* 调节机构或调委会Id */
+	mediateOrgId Long,
+	/* 调节机构或调委会名称 */
+	mediateOrgName String,
+	/* 调节员Id */
+	mediatorId Long,
+	/* 调节员名称 */
+	mediatorName String,
+	/* 备注 */
+	remarks String,
+	/* 奖金精确到分100表示1元 */
+	bonusTotal Long,
+	/* 也是金额调解难易程度分类，用以计算调解员酬劳：简易，一般，疑难 */
+	difficultyLevel Long,
+	/* 调解难易程度分类，用以计算调解员酬劳：简易，一般，疑难 */
+	difficultyLevelName String,
+	/* 其他奖励（备用） */
+	otherBonusValue Long,
+	/* 其他奖励内容 */
+	otherBonusContent String
+}
+
+
+/* 专职调解员酬劳计算表  */
+entity CaseMediatorSalary (de_cmediator_salary) {
+	/* （来自于字典表）薪酬核算类型 */
+	sType String,
+	/* 备注 */
+	remarks String,
+	/* 奖金精确到分100表示1元 */
+	bonusTotal Long,
+	/* 也是金额调解难易程度分类，用以计算调解员酬劳：简易，一般，疑难 */
+	difficultyLevel Long,
+	/* 调解难易程度分类，用以计算调解员酬劳：简易，一般，疑难 */
+	difficultyLevelName String,
+	/* 其他奖励（备用） */
+	otherBonusValue Long,
+	/* 其他奖励内容 */
+	otherBonusContent String
+}
+
+/* 过程处理新信息 */
+entity CaseProcessInfo (de_case_process_info) {
+	/* （来自于字典表）调解类型（调查，调解，回访，专家申请审核，回复审核，督办，延期申请，延期审核） */
+	mType String,
+	/* 调解员,调查人 */
+	mPersonId Long,
+	/* 调解员,调查人 */
+	mPersonName String,
+	/* 被调查人当事人一方 */
+	respondents String,
+	/* 参加人如家属 */
+	participant String,
+	/* 记录人做笔录的人 */
+	recorder String,
+	/* 调解记录 */
+	mRecordContent String,
+	/* 调解结果或处理意见 */
+	mResultContent String,
+	/* 开始调解时间 */
+	beginDateTime Instant,
+	/* 结束调解时间 */
+	endDateTime Instant,
+	/* 调解地点 */
+	mAddress String,
+	/* 满意不满意评价 */
+	mEvaluat String,
+	/* 本次处理得分 */
+	mScore Double,
+	/* 评价 */
+	appraise String,
+	/* 评分时间 */
+	evaluatDateTime Instant
+}
+
+
+entity EvaluatService (de_evaluate_service) {
+	/* 满意,不满意评价 */
+	mEvaluat String,
+	/* 打分 */
+	score Double,
+	/* 评价 */
+	appraise String,
+	/* 案件id */
+	caseId Long,
+	/* 工作人员 */
+	staffId Long,
+	/* 公众用户 */
+	userId Long,
+	/* 时间 */
+	evaluatDate ZonedDateTime
+}
+
+/* 人民调解员考核表 */
+entity EvaluateMediator (de_evaluate_mediator) {
+	/* （来自于字典表）考核表类型，模板，真实考核 */
+	evaluateType String,
+	/* 考核表名称 */
+	evaluateName String,
+	/* 评价 */
+	appraise String,
+	/* 考核时间 */
+	evaluatDate ZonedDateTime,
+	/* 调解员姓名 */
+	mediatorName String,
+	/* 调解员性别 */
+	mediatorGender String,
+	/* 调解员年龄 */
+	mediatorAge Long,
+	/* 调解员职务 */
+	mediatorDuty String,
+	/* 政治面貌 */
+	mPoliticsStatus String,
+	/* 所在调委会名称 */
+	mOrgName String,
+	/* 得分 */
+	eScore Double,
+	/* 等次 */
+	mLevel String,
+	/* 考核小组意见 */
+	mEgroupOpinion String,
+	/* 考核小组意见负责人 */
+	mEgroupOpinionEr String,
+	/* 考核小组意见负责人时间 */
+	mEgroupOpinionDt ZonedDateTime,
+	/* 考核机关意见 */
+	mEofficeOpinion String,
+	/* 考核机关意见负责人 */
+	mEofficeOpinionEr String,
+	/* 考核机关意见负责人时间 */
+	mEofficeOpinionDt ZonedDateTime,
+	/* 备注 */
+	remarks String
+}
+
+/* 人民调解员考核规则 */
+entity EvaluateRule (de_evaluate_rule) {
+	/* 规则名称 */
+	ruleName String,
+	/* 项目ID */
+	rItemId Long,
+	/* 项目名 */
+	rItemName String,
+	/* 项目分值 */
+	rItemGrade String,
+	/* 项目得分 */
+	rItemscore Double,
+	/* 状态 */
+	rState String,
+	/* 备注 */
+	remarks String
+}
+
+/* 人民调解员考核详细规则项目与得分 */
+entity EvaluateRuleItem (de_evaluate_rule_item) {
+	/* 考核表类型，模板，真实考核 */
+	evaluateType String,
+	/* 规则ID */
+	ruleId Long,
+	/* 规则名称 */
+	ruleName String,
+	/* 项目ID */
+	rItemId Long,
+	/* 项目名 */
+	rItemName String,
+	/* 项目分值 */
+	rItemGrade String,
+	/* 项目得分 */
+	rItemscore Double,
+	/* 备注 */
+	remarks String
+}
+
+
+/* 人民调解员考核工作任务 */
+entity EvaluateMission (de_evaluate_mission) {
+	/* （来自于字典表）类型 */
+	gType String,
+	/* 负责人ID */
+	userId Long,
+	/* 负责人名称 */
+	userName String,
+	/* 机构ID */
+	orgId Long,
+	/* 机构名 */
+	orgName String,
+	/* 名 */
+	theName String,
+	/* 描述 */
+	theDescribe String,
+	/* 备注 */
+	remarks String
+}
+
+/* 人民调解员机关与小组 */
+entity OfficeGroup (de_office_group) {
+	/* （来自于字典表）类型，考核小组或考核机关 */
+	gType String,
+	/* 小组负责人ID */
+	userId Long,
+	/* 小组负责人名称 */
+	userName String,
+	/* 机构ID */
+	orgId Long,
+	/* 机构名 */
+	orgName String,
+	/* 组名 */
+	groupName String,
+	/* 组描述 */
+	groupDescribe String,
+	/* 备注 */
+	remarks String,
+	/* 引用ID */
+	referId Long
+}
+
+/* 人民调解员机关与小组的组员 */
+entity GroupMember (de_group_member) {
+	/* （来自于字典表）类型，考核小组或考核机关 */
+	mType String,
+	/* 人ID */
+	userId Long,
+	/* 人名称 */
+	userName String,
+	/* 小组中角色 */
+	gRole String,
+	/* 备注 */
+	remarks String
+}
+
+relationship OneToOne {
+    EvaluatService{conflictCase required} to ConflictCase,
+    GroupMember{userExtend} to UserExtend
+}
+relationship ManyToMany {   
+	RelevantPerson{conflictCase} to ConflictCase{relevantPerson},
+	RelevantPerson{mediationInfo} to CaseProcessInfo,
+	EvaluateRule{items} to EvaluateRuleItem,
+	EvaluateMediator{rules} to EvaluateRule
+}
+relationship ManyToOne {
+	// ConflictCase{upper} to ConflictCase,
+	CaseProcessInfo{conflictCase} to ConflictCase,
+	CaseProcessInfo{personalInfo} to UserExtend,
+	CaseMediatorSalary{caseSalary} to UserExtend,
+	CaseSalary{conflictCase} to ConflictCase,
+	EvaluateRuleItem{mediator} to EvaluateMediator,
+	GroupMember{group} to OfficeGroup
+}
+
+paginate * with pagination
+
+dto * with mapstruct
+
+service all with serviceImpl
+
+/** 
+ * service all with serviceImpl except Organization, UserRoleOrganization, Resource, Role
+ */
