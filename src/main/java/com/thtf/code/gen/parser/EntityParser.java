@@ -97,6 +97,7 @@ public class EntityParser {
 					}
 					if(this.isMatchName(fromName)){
 						from.put("entiy", fromName);
+						relation.put("from", from);
 						String leftB = this.getKeyValue();
 						if(leftB.equals("{")){//关系的
 							String relationName = this.getKeyValue();
@@ -106,7 +107,7 @@ public class EntityParser {
 									String displayName = this.getKeyValue();
 									if(this.isMatchName(displayName)){
 										from.put("display",displayName);
-										relation.put("from", from);
+//										relation.put("from", from);
 										String firstEnd = this.getKeyValue();
 										String lastEnd = this.getKeyValue();
 										if(!(firstEnd.equals(")"))&&!(lastEnd.equals("}"))){
@@ -141,13 +142,15 @@ public class EntityParser {
 								if(leftR.equals("{")){//关系的
 									String relationName = this.getKeyValue();
 									if(this.isMatchName(relationName)){
+										relation.put("to", to);
+										this.relations.add(to);
 										to.put("relationName", relationName);
 										if(this.getKeyValue().equals("(")){
 											String displayName = this.getKeyValue();
 											if(this.isMatchName(displayName)){
 												to.put("display",displayName);
-												relation.put("to", to);
-												this.relations.add(relation);
+//												relation.put("to", to);
+//												this.relations.add(relation);
 												String firstEnd = this.getKeyValue();
 												String lastEnd = this.getKeyValue();
 												if(!(firstEnd.equals(")"))&&!(lastEnd.equals("}"))){
