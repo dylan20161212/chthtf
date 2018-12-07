@@ -91,9 +91,12 @@ public class EntityParser {
 			
 					
 					Map<String, Object> from = new HashMap<String,Object>();
-					String fromName = this.getKeyValue();
+					String fromName = this.getKeyValue().trim();
 					if(fromName.equals("}")){
 						break;
+					}
+					if(fromName.equals(",")){
+						continue;
 					}
 					if(this.isMatchName(fromName)){
 						from.put("entiy", fromName);
