@@ -1,0 +1,112 @@
+/* 专家薪酬管理test*/
+entity TUserExtendSalary(te_user_extend_salary){
+	/* 专家Id */
+	userExtendId Long required,
+	/* 专家名称 */
+	userName String,
+	/* 岗位代码 */
+	mdutyCode String,
+	/* 岗位职级 */
+	mdutyName String,
+	/* 工资发放月 */
+	sMonth String,
+	/* 工资合计金额(以分为单位) */
+	sTotal Long,
+	/* 工资发放状态 */
+	sFlag String,
+	/* 工资明细信息JSON串 */
+	sDetailInfo String,
+	/* 工资核算日期 */
+	sSumDate ZonedDateTime,
+	/* 工资发放日期 */
+	sSendDate ZonedDateTime,
+	/* 计算机工资人ID */
+	sStaffId Long,
+	/* 计算机工资人姓名 */
+	sStaffName String,
+	/* 备用字段 */
+	sOther String
+	}
+
+
+
+/* 专家薪酬明细表 */
+entity TUserSalaryInfo ( te_user_salary_info ) {
+	/* 专家Id */
+	userExtendId Long,
+	/* 专家名称 */
+	userName String,
+	/* 岗位代码 */
+	mdutyCode String,
+	/* 岗位职级 */
+	mdutyName String,
+	/* 工资发放月 */
+	sMonth String,
+	/* 明细项目ID */
+	sItemID Long,
+	/* 明细项目名称  */
+	sItemName String,
+	/* 明细项目数量 */
+	sItemQuantity Long,
+	/* 明细项目单价（以分为单位） */
+	sItemPrice Long,
+	/* 明细项目数量乘以单价 */
+	sItemAmount Long,
+	/* 工资核算日期 */
+	sSumDate ZonedDateTime,
+	/* 备用字段 */
+	sOther String
+}
+
+/* 岗位薪酬表 */
+entity TDutySalary ( te_duty_salary 
+	
+) {
+	/* 岗位代码 */
+	dutyCode String,
+	/* 岗位职级 */
+	dutyName String,
+	/* 状态 */
+	dFlag String,
+	/* 最后修改时间 */
+	dChangeTime ZonedDateTime,
+	/* 备注 */
+	dRemarks String,
+	/* 岗位工资明细信息JSON串 */
+	dDetailInfo String,
+	/* 备用字段 */
+	dOther String
+}
+
+/* 岗位薪酬明细表 */
+entity TDutySalaryInfo( te_duty_salary_info ) {
+	/* 岗位薪酬Id */
+	dSalaryId Long,
+	/* 岗位薪酬代码 */
+	dutyCode String,
+	/* 岗位职级 */
+	dutyName String,
+	/* 明细项目ID */
+	sItemID Long,
+	/* 明细项目名称  */
+	sItemName String,
+	/* 明细项目单价（以分为单位） */
+	sItemPrice Long,
+	/* 备用字段 */
+	sOther String
+}
+
+// 这里表示多对一的关系
+relationship ManyToOne {
+	TDutySalaryInfo{dutySalary(s)} to TDutySalary,
+	TUserSalaryInfo{userExtendSalary} to TUserExtendSalary
+}
+// Set pagination options
+// paginate JobHistory, Employee with infinite-scroll
+paginate * with pagination
+
+dto * with mapstruct
+
+// Set service options to all except few
+// service all with serviceImpl except Employee, Job
+service all with serviceImpl
