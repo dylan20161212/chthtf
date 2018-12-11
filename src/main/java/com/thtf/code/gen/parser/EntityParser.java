@@ -33,6 +33,9 @@ public class EntityParser {
     
     private List<Map<String,Object>> relations = new ArrayList<Map<String,Object>>();
     
+    
+    private Integer lineNum = 0;
+    
     public EntityParser() {
 		// TODO Auto-generated constructor stub
     	dbTypeConstrainMap.put("String", "required, minlength, maxlength, pattern, unique");
@@ -81,7 +84,7 @@ public class EntityParser {
 		relation.put("comment", comment);
 		String relationKey = this.getKeyValue();
 		if(isValidRelationName(relationKey)){
-			relation.put("key", relationKey);
+			
 		}
 		
 		String value = this.getKeyValue();
@@ -99,7 +102,10 @@ public class EntityParser {
 						continue;
 					}
 					if(this.isMatchName(fromName)){
-						from.put("entiy", fromName);
+						relation = new HashMap<String,Object>(); 
+						relation.put("comment", comment);
+						relation.put("key", relationKey);
+						from.put("entity", fromName);
 						relation.put("from", from);
 						String leftB = this.getKeyValue();
 						if(leftB.equals("{")){//关系的
@@ -114,7 +120,7 @@ public class EntityParser {
 										String firstEnd = this.getKeyValue();
 										String lastEnd = this.getKeyValue();
 										if(!(firstEnd.equals(")"))&&!(lastEnd.equals("}"))){
-											throw new RuntimeException("parse error");
+											throw new RuntimeException("parse error at:"+this.lineNum);
 										}
 									}
 									
@@ -129,7 +135,7 @@ public class EntityParser {
 							String toEntityName = this.getKeyValue();
 							if(toEntityName.endsWith(",")){
 								toEntityName = toEntityName.substring(0, toEntityName.indexOf(","));
-								to.put("entiy", toEntityName);
+								to.put("entity", toEntityName);
 								relation.put("to", to);
 								this.relations.add(relation);
 								continue;
@@ -140,13 +146,13 @@ public class EntityParser {
 								this.position = this.lastPosition;
 							}
 							if(this.isMatchName(toEntityName)){
-								to.put("entiy", toEntityName);
+								to.put("entity", toEntityName);
 								String leftR = this.getKeyValue();
 								if(leftR.equals("{")){//关系的
 									String relationName = this.getKeyValue();
 									if(this.isMatchName(relationName)){
 										relation.put("to", to);
-										this.relations.add(to);
+										this.relations.add(relation);
 										to.put("relationName", relationName);
 										if(this.getKeyValue().equals("(")){
 											String displayName = this.getKeyValue();
@@ -157,7 +163,7 @@ public class EntityParser {
 												String firstEnd = this.getKeyValue();
 												String lastEnd = this.getKeyValue();
 												if(!(firstEnd.equals(")"))&&!(lastEnd.equals("}"))){
-													throw new RuntimeException("parse error");
+													throw new RuntimeException("parse error at:"+this.lineNum);
 												}
 											}
 											
@@ -169,7 +175,7 @@ public class EntityParser {
 							
 							
 						}else{
-							throw new RuntimeException("parse error,after relationName!");
+							throw new RuntimeException("parse error,after relationName!at:"+this.lineNum);
 						}
 						
 					}
@@ -200,7 +206,7 @@ public class EntityParser {
 				return true;
 			}
 		}
-		throw new RuntimeException("invalid realtionName:"+relationName);
+		throw new RuntimeException("invalid realtionName:"+relationName+",at:"+this.lineNum);
 	}
 
 
@@ -281,7 +287,7 @@ public class EntityParser {
 			String feildConstrain = "";
 			for(int i=2;i<vs.length;i++){
 				if(!constrain.contains(vs[i])){
-					throw new RuntimeException(constrain+" parse error");
+					throw new RuntimeException(constrain+" parse error at:"+this.lineNum);
 				}
 				feildConstrain+=vs[i];
 			}
@@ -290,7 +296,7 @@ public class EntityParser {
 			fields.add(field);
 			
 		}else{
-			throw new RuntimeException(type+" parse error");
+			throw new RuntimeException(type+" parse error at:"+this.lineNum);
 		}
 		return false;
 	}
@@ -303,7 +309,7 @@ public class EntityParser {
 			//System.out.println(entityName);
 			return true;
 		}else{
-			throw new RuntimeException("parse error");
+			throw new RuntimeException("parse error at:"+this.lineNum);
 		}
 	}
 	
@@ -342,6 +348,10 @@ public class EntityParser {
 			char c = this.content.charAt(position);
 			sb.append(c);
 			String ch = sb.toString().trim();
+//			if(c == '\n'){
+//				this.lineNum++;
+//				this.position++;
+//			}
 			if(this.isContianedSpecial(ch.trim())){
 				position++;
 				return ch.trim();
@@ -351,6 +361,7 @@ public class EntityParser {
 				
 				return x;
 			}
+			
 			if(String.valueOf(c).equals(" ") && !ch.equals("")){
 				position++;
 				return ch;
@@ -394,13 +405,36 @@ public class EntityParser {
 
 			String elementstr = null;
 			while ((elementstr = br.readLine()) != null) {
-				this.content += elementstr+" ";
+				this.content += elementstr+"\n ";
 			}
 		}
 		return this.content;
 	}
 	
 	
+	
+	
+	
+	public List<Map<String, Object>> getEntities() {
+		return entities;
+	}
+
+
+	public void setEntities(List<Map<String, Object>> entities) {
+		this.entities = entities;
+	}
+
+
+	public List<Map<String, Object>> getRelations() {
+		return relations;
+	}
+
+
+	public void setRelations(List<Map<String, Object>> relations) {
+		this.relations = relations;
+	}
+
+
 	public static void main(String[] args) throws FileNotFoundException, IOException {
 		String content="entity A (t_test) { name String, age Integer }";
 		EntityParser ep = new EntityParser();
