@@ -202,13 +202,18 @@ public class EntityParser {
 
 		Map<String, Object> entity = new HashMap<String, Object>();
 		entity.put("comment", comment);
-
+		this.entities.add(entity);
 		String entityName = this.getKeyValue();
 		isMatchName(entityName);
 		// System.out.println("entity name:"+entityName);
 		entity.put("name", entityName);
 		String leftQ = this.getKeyValue();
-		if (leftQ.equals("(")) {
+		if(leftQ.equals("entity") || leftQ.equals("relationship")){//如果获取到的是其中之一，那么回到上一个位置，重新走此方法解析entity
+			this.position = lastPosition;
+			return;
+		}
+		
+		if (leftQ.equals("(")) {// 如果是小括号，获取括号内表名
 			String tableName = "";
 			String v = "";
 			while (!(v = this.getKeyValue()).equals(")")) {
@@ -217,8 +222,14 @@ public class EntityParser {
 			// System.out.println("table name: "+tableName);
 			entity.put("tableName", tableName);
 		}
-		String leftB = this.getKeyValue();
-		if (leftB.equals("{")) {
+		
+		if (leftQ.equals("{")) {// 如果括号是大括号，证明没有定义表名，所以回到上个位置重新走大括号逻辑
+			this.position = this.lastPosition;
+		}
+		
+		String leftB = this.getKeyValue().trim();
+		
+		if (leftB.equals("{")) {//解析字段内容
 			// String v = "";
 			List<Map<String, Object>> fields = new ArrayList<Map<String, Object>>();
 			do {
@@ -231,7 +242,7 @@ public class EntityParser {
 				String value = "";
 
 				while (!value.endsWith(",")) {
-					if (value.endsWith("}")) {
+					if (value.endsWith("}")) {//证明此entity解析完成
 						fieldStr += value.substring(0, value.length() - 1) + " ";
 						break;
 					}
@@ -245,7 +256,7 @@ public class EntityParser {
 				this.processEntityField(vs, field, entity, fields);
 				if (value.endsWith("}")) {
 					entity.put("fields", fields);
-					this.entities.add(entity);
+//					this.entities.add(entity);
 					break;
 				}
 				// System.out.println("filed comments:"+fieldComment);

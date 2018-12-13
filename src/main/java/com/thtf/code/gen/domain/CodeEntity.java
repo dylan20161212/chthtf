@@ -3,6 +3,7 @@ package com.thtf.code.gen.domain;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class CodeEntity {
@@ -69,14 +70,20 @@ public class CodeEntity {
 	public CodeEntity(Map<String,Object> entity ,List<Map<String,Object>> relations){
 		this.name = (String) entity.get("name");
 		this.tableName = (String) entity.get("tableName");
-		if(this.tableName == null || this.tableName.isEmpty()){
-			this.tableName = this.name.substring(0, 1).toUpperCase()+this.name.substring(1);
-		}
+		Optional<String> tableName = Optional.ofNullable(this.tableName);
+
+        if(tableName.isPresent()){
+        	this.tableName = this.tableName.toLowerCase();
+        }else{
+        	this.tableName = this.name.toLowerCase();
+        }
+	
 		this.comment = (String) entity.get("comment");
 		if(this.comment == null || this.comment.isEmpty()){
 			this.comment = this.tableName;
 		}
-		List<Map<String,Object>> fields = (List<Map<String, Object>>) entity.get("fields");
+		List<Map<String,Object>> fields = (List<Map<String, Object>>) Optional.ofNullable(entity.get("fields")).orElse(new ArrayList<Map<String,Object>>());
+		
 		this.fields = (List<CodeField>) fields.stream().map((field)->{
 			return new CodeField(field,this);
 		}).collect(Collectors.toList());
@@ -112,7 +119,7 @@ public class CodeEntity {
 				 "*\n"+
 				 "*/\n"+
 				//"@ApiModel(description = \""+this.comment+"\")\n"+
-				"@Entity(name =\" "+this.tableName+"\")\n"+
+				"@Entity(name =\""+this.tableName+"\")\n"+
 				"@Table(appliesTo = \""+this.tableName+"\",comment=\""+this.comment+"\") \n"+
 				"@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)\n"+
 				"public class "+this.name+" extends AbstractAuditingEntity implements Serializable { \n\n"+

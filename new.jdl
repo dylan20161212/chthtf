@@ -92,6 +92,20 @@ entity TDutySalaryInfo (te_duty_salary_info) {
 	sOther String
 }
 
+/* 教师表 */
+entity Teacher{
+	
+}
+
+/* 技能表 */
+entity Skill{
+	
+}
+
+relationship ManyToMany{
+	Teacher to Skill 
+}
+
 // 这里表示多对一的关系
 relationship ManyToOne {
 	TDutySalaryInfo{dutySalary} to TDutySalary,
