@@ -18,7 +18,8 @@ public class EntityParser {
 	// private String step2Pattern1 = "^\\(\\s*[0-9a-zA-Z_]{1,}\\s*\\)$";
 
 	// private String filePath="D:/projects/backend/redapple/test.jdl";
-	private String filePath = "C:/Users/THTF/git/theJhi/doc/jdl/new.jdl";
+	
+	private String filePath;
 
 	private String content = "";
 
@@ -34,8 +35,12 @@ public class EntityParser {
 
 	private Integer lineNum = 0;
 
-	public EntityParser() {
+	public EntityParser(String jdlFile) {
 		// TODO Auto-generated constructor stub
+		if(jdlFile == null || jdlFile.trim().equals("")){
+			throw new RuntimeException("jdlFile can not is empty!");
+		}
+		this.filePath = jdlFile;
 		dbTypeConstrainMap.put("String", "required, minlength, maxlength, pattern, unique");
 		dbTypeConstrainMap.put("Integer", "required, min, max, unique");
 		dbTypeConstrainMap.put("Long", "required, min, max, unique");
@@ -56,21 +61,28 @@ public class EntityParser {
 	}
 
 	public Boolean parser() throws FileNotFoundException, IOException {
-		this.read();
-		while (this.position < this.content.length()) {
-			String comment = getComment();
-			String componentKey = this.getKeyValue().trim();
-			if (componentKey.equals("entity")) {
-				parseEntity(comment);
+		try{
+			this.read();
+			while (this.position < this.content.length()) {
+				String comment = getComment();
+				String keyValue = this.getKeyValue();
+				keyValue = ((keyValue == null)?"":keyValue);
+				String componentKey = keyValue.trim();
+				if (componentKey.equals("entity")) {
+					parseEntity(comment);
+				}
+	
+				if (componentKey.equals("relationship")) {
+					this.parseRelationship(comment);
+				}
 			}
-
-			if (componentKey.equals("relationship")) {
-				this.parseRelationship(comment);
-			}
+	
+			System.out.println(entities);
+			System.out.println(this.relations);
+		}catch(Exception e) {
+			e.printStackTrace();
+			System.out.println("parse error at line:"+this.lineNum +" or upper line！");
 		}
-
-		System.out.println(entities);
-		System.out.println(this.relations);
 
 		return false;
 	}
@@ -85,7 +97,7 @@ public class EntityParser {
 
 		String value = this.getKeyValue();
 		if (value.equals("{")) {
-
+			String relationName = "";
 			while (true) {
 
 				Map<String, Object> from = new HashMap<String, Object>();
@@ -104,7 +116,7 @@ public class EntityParser {
 					relation.put("from", from);
 					String leftB = this.getKeyValue();
 					if (leftB.equals("{")) {// 关系的
-						String relationName = this.getKeyValue();
+						relationName = this.getKeyValue();
 						if (this.isMatchName(relationName)) {
 							from.put("relationName", relationName);
 							if (this.getKeyValue().equals("(")) {
@@ -115,7 +127,7 @@ public class EntityParser {
 									String firstEnd = this.getKeyValue();
 									String lastEnd = this.getKeyValue();
 									if (!(firstEnd.equals(")")) && !(lastEnd.equals("}"))) {
-										throw new RuntimeException("parse error at:" + this.lineNum);
+										throw new RuntimeException("parse error at: " + this.lineNum);
 									}
 								}
 
@@ -143,7 +155,7 @@ public class EntityParser {
 							to.put("entity", toEntityName);
 							String leftR = this.getKeyValue();
 							if (leftR.equals("{")) {// 关系的
-								String relationName = this.getKeyValue();
+								relationName = this.getKeyValue();
 								if (this.isMatchName(relationName)) {
 									relation.put("to", to);
 									// this.relations.add(relation);
@@ -157,7 +169,7 @@ public class EntityParser {
 											String firstEnd = this.getKeyValue();
 											String lastEnd = this.getKeyValue();
 											if (!(firstEnd.equals(")")) && !(lastEnd.equals("}"))) {
-												throw new RuntimeException("parse error at:" + this.lineNum);
+												throw new RuntimeException("parse error at: " + this.lineNum);
 											}
 										}
 
@@ -167,7 +179,7 @@ public class EntityParser {
 						}
 
 					} else {
-						throw new RuntimeException("parse error,after relationName!at:" + this.lineNum);
+						throw new RuntimeException("parse error,after relationName "+relationName+" at:" + this.lineNum);
 					}
 
 				}
@@ -326,6 +338,9 @@ public class EntityParser {
 	private String getComment() {
 		String value = this.getKeyValue();
 		String comment = "";
+		if(value == null){
+			return "";
+		}
 		if (value.equals("/*")) {
 			// comment = "/*";
 			String endComment = "";
@@ -350,10 +365,7 @@ public class EntityParser {
 			char c = this.content.charAt(position);
 			sb.append(c);
 			String ch = sb.toString().trim();
-			// if(c == '\n'){
-			// this.lineNum++;
-			// this.position++;
-			// }
+			this.setLineNum();
 			if (this.isContianedSpecial(ch.trim())) {
 				position++;
 				return ch.trim();
@@ -372,6 +384,22 @@ public class EntityParser {
 		}
 		return null;
 
+	}
+	
+	private void setLineNum(){
+		
+		try{
+			if(this.position == 0){
+				return;
+			}
+			String str = String.valueOf(this.content.charAt(this.position));
+			if(str.equals("\n")){
+				this.lineNum++;
+			}
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
 	}
 
 	private boolean isContianedSpecial(String sb) {
@@ -428,8 +456,9 @@ public class EntityParser {
 	}
 
 	public static void main(String[] args) throws FileNotFoundException, IOException {
+		String path = "D:\\projects\\chthtf\\jdl\\deconflict.jdl";
 		String content = "entity A (t_test) { name String, age Integer }";
-		EntityParser ep = new EntityParser();
+		EntityParser ep = new EntityParser(path);
 		ep.parser();
 	}
 

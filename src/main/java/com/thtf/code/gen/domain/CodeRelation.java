@@ -1,5 +1,7 @@
 package com.thtf.code.gen.domain;
 
+import com.thtf.code.gen.util.AppenderUtil;
+
 public class CodeRelation {
 	private String comment;
 
@@ -87,23 +89,23 @@ public class CodeRelation {
 		}else{
 			toName = this.toName;
 		}
-		if(this.name.equals("ManyToOne")){
+		if(isManyToOne()){
 			code = "   @ManyToOne \n"+
 		           "   private "+this.toEntity +" "+toName+" ;";
 			
 		}
-		if(this.name.equals("OneToMany")){
+		if(isOneToMany()){
 			code = "   @OneToMany(mappedBy = \""+this.fromName+"\")\n"+
 			              "private Set<"+this.toEntity +"> "+((toName.length()==this.toEntity.length())?toName+"s":toName)+" = new HashSet<"+this.toEntity+">();";
 			setImportLib();
 		}
 		
-		if(this.name.equals("OneToOne")){
+		if(isOneToOne()){
 			code = "   @ManyToOne+\n"+
 		           "   private "+this.toEntity +" "+toName+" ;";
 		}
 		
-		if(this.name.equals("ManyToMany")){
+		if(isManyToMany()){
 			code = "   @ManyToMany \n"+
 				    //"@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)\n"+
 				   
@@ -112,6 +114,36 @@ public class CodeRelation {
 		}
 		return code+"\n";
 	}
+
+	/**
+	 * @return
+	 */
+	public boolean isManyToMany() {
+		return this.name.equals("ManyToMany");
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean isOneToOne() {
+		return this.name.equals("OneToOne");
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean isOneToMany() {
+		return this.name.equals("OneToMany");
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean isManyToOne() {
+		return this.name.equals("ManyToOne");
+	}
+	
+	
 
 	/**
 	 * 
@@ -137,5 +169,20 @@ public class CodeRelation {
 	public void setCodeEntity(CodeEntity codeEntity) {
 		this.codeEntity = codeEntity;
 	}
+
+	public String generateDBScriptCode() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	
+	
+	
+
+	
+	
+	
+	
 
 }
