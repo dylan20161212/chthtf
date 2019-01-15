@@ -118,7 +118,7 @@ public class CodeEntity {
 	}
 
 	public String generateDomainCode() {
-		String classx = "package " + this.basePackage + ".domains; \n [importLib] \n" +
+		String classx = "package " + this.basePackage + ".domain; \n [importLib] \n" +
 
 				"/**\n" + "* \n" + this.comment + "*/\n" + "/**\n" + "* @author Administrator\n" + "*\n" + "*/\n" +
 				// "@ApiModel(description = \""+this.comment+"\")\n"+
@@ -141,18 +141,22 @@ public class CodeEntity {
 
 		}).collect(Collectors.toList());
 		String relationCode = "";
+		String relationGetSetCode = "";
 
 		for (CodeRelation relation : this.relations) {
 			relationCode += relation.generateDomainCode() + "\n";
+			relationGetSetCode+= relation.generateDomainGetSetCode() + "\n";
 		}
 		String codesx = "";
 		for (String fieldCode : fieldCodes) {
 			codesx += fieldCode;
 		}
+		codesx += "public Long getId(){\n return this.id;\n}\n";
+		codesx += "public void setId(Long id){\n this.id=id;\n}\n";
 		for (String getSetCode : getSetCodes) {
 			codesx += getSetCode;
 		}
-		String finalCode = classx + "\n" + codesx + "\n" + relationCode + "\n }";
+		String finalCode = classx + "\n" + codesx+relationGetSetCode + "\n" + relationCode + "\n }";
 		return (this.importLib != null) ? finalCode.replace("[importLib]", this.importLib)
 				: finalCode.replace("[importLib]", " ");
 	}
@@ -217,7 +221,7 @@ public class CodeEntity {
 		  
 		AppenderUtil appender = AppenderUtil.newOne();
 		appender.append("package "+this.basePackage+".repository;");
-		appender.append("import com.mycompany.myapp.domain."+this.name+";");
+		appender.append("import "+this.basePackage+".domain."+this.name+";");
 		appender.append("import org.springframework.stereotype.Repository;");
 		appender.append("import org.springframework.data.jpa.repository.*;");
 		appender.append("@SuppressWarnings(\"unused\")");
@@ -285,7 +289,7 @@ public class CodeEntity {
 
 		"import java.util.*;\n"+
 		
-		"import org.mapstruct.Mapping;\n"+
+		"import org.mapstruct.*;\n"+
 		"import com.thtf.app.domain.*;\n"+
 		"import com.thtf.app.service.dto.*;\n"+
 
@@ -296,7 +300,7 @@ public class CodeEntity {
 		" * MapStruct support is still in beta, and requires a manual step with an IDE.\n"+
 		" */\n"+
 		"@Mapper(componentModel = \"spring\", uses = {"+userMapper+"})\n"+
-		"public interface "+this.name+"Mapper implements EntityMapper<"+this.name+"DTO, "+this.name+"> {\n";
+		"public interface "+this.name+"Mapper extends EntityMapper<"+this.name+"DTO, "+this.name+"> {\n";
 		
 		
 		for (CodeRelation codeRelation : this.relations) {
@@ -309,11 +313,11 @@ public class CodeEntity {
 	    
 	    for (CodeRelation codeRelation : this.relations) {
 			if(codeRelation.isManyToOne()){
-				code+="@Mapping(source = \""+codeRelation.getFromName()+"Id\", target = \""+codeRelation.getFromName()+".id"+")+\n";
+				code+="@Mapping(source = \""+codeRelation.getFromName()+"Id\", target = \""+codeRelation.getFromName()+".id\""+")\n";
 			}
 		}
 		
-	    code+=this.name+"DTO toEntity("+this.name+"DTO "+this.firstLowCase(this.name)+"DTO );\n";		
+	    code+=this.name+" toEntity("+this.name+"DTO "+this.firstLowCase(this.name)+"DTO );\n";		
 		code+=
 		
 	  	"default "+this.name+" fromId(Long id) {\n"+
@@ -332,11 +336,16 @@ public class CodeEntity {
 
 	public String generateDTOCode(){
 		AppenderUtil appender = AppenderUtil.newOne();
+		appender.append("package "+this.basePackage+".service.dto;");
+		appender.append("");
+		appender.append("import java.time.ZonedDateTime;");
 		appender.append("import java.util.*;");
-		appender.append("import javax.validation.constraints..*;");
-		appender.append("public class NotificationDTO {");
+		appender.append("import javax.validation.constraints.*;");
+		appender.append("public class "+this.name+"DTO {");
 		String fieldTag = "//generate field by CodeGen！";
 		String getSetTag = "//generate GetSet by CodeGen！";
+		appender.append("");
+		appender.append("private Long id;");
 	    for (CodeField codeField : fields) {
 			appender.append(codeField.generateDTOCodeField());
 //			appender.append(fieldTag);
@@ -345,19 +354,21 @@ public class CodeEntity {
 	    
 	    for (CodeRelation relation : this.allRelations) {
 	    	if(relation.isManyToOne() && relation.getFromEntity().equals(this.name)){
-	    		appender.append(" private Long "+this.firstUpperCase(relation.getFromName())+"Id ;");
+	    		appender.append(" private Long "+this.firstLowCase(relation.getFromName())+"Id ;");
 	    	}
 	    	if(relation.isOneToMany() && relation.getToEntity().equals(this.name)){
-	    		appender.append(" private Long "+this.firstUpperCase(relation.getToName())+"Id ;");
+	    		appender.append(" private Long "+this.firstLowCase(relation.getToName())+"Id ;");
 	    	}
 	    	
 	    	if(relation.isManyToMany() && relation.getFromEntity().equals(this.name)){
-	    		appender.append(" private Long "+this.firstUpperCase(relation.getFromName())+"Id ;");
+	    		appender.append(" private Long "+this.firstLowCase(relation.getFromName())+"Id ;");
 	    	}
 	    	if(relation.isOneToOne() && relation.getFromEntity().equals(this.name)){
 	    		//TODO
 	    	}
 		}
+	    appender.append(" public Long getId(){\n return id;\n}");
+	    appender.append(" public void setId(Long id){\n this.id = id; \n}");
 	    
 	    for (CodeField codeField : fields) {
 			appender.append(codeField.generateDTOCodeGetSet());
@@ -366,14 +377,14 @@ public class CodeEntity {
 	    
 	    for (CodeRelation relation : this.allRelations) {
 	    	if(relation.isManyToOne() && relation.getFromEntity().equals(this.name)){
-	    		appender.append(this.genGetAndSet("Long", relation.getFromName()));
+	    		appender.append(this.genGetAndSet("Long", this.firstLowCase(relation.getFromName())+"Id"));
 	    	}
 	    	if(relation.isOneToMany() && relation.getToEntity().equals(this.name)){
-	    		appender.append(this.genGetAndSet("Long", relation.getToName()));
+	    		appender.append(this.genGetAndSet("Long", this.firstLowCase(relation.getToName()))+"Id");
 	    	}
 	    	
 	    	if(relation.isManyToMany() && relation.getFromEntity().equals(this.name)){
-	    		appender.append(this.genGetAndSet("Long", relation.getFromName()));
+	    		appender.append(this.genGetAndSet("Long", this.firstLowCase(relation.getFromName()))+"Id");
 	    	}
 	    	if(relation.isOneToOne() && relation.getFromEntity().equals(this.name)){
 	    		//TODO
@@ -393,7 +404,7 @@ public class CodeEntity {
 	 */
 	private String genGetAndSet(String type,String name) {
 		AppenderUtil appenderX = AppenderUtil.newOne();
-		appenderX.append(" public "+type+" get"+this.firstUpperCase(name)+"(){\n}");
+		appenderX.append(" public "+type+" get"+this.firstUpperCase(name)+"(){ \n return this."+this.firstLowCase(name)+";\n}");
 		appenderX.append(" public void set"+this.firstUpperCase(name)+"( "+type+" "+name+" ){\n"
 				+"  this."+name+" = "+name+";\n"
 				+"}");

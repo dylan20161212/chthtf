@@ -1,5 +1,8 @@
 package [basePackage].service;
 
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.stream.Collectors;
 import [basePackage].service.*;
 import [basePackage].domain.*;
 import [basePackage].repository.*;
@@ -9,6 +12,7 @@ import [basePackage].service.mapper.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @Transactional
-public class [domainName]ServiceImpl implements [domainName]Service {
+public class [domainName]Service {
 
     private final Logger log = LoggerFactory.getLogger([domainName]Service.class);
 
@@ -28,7 +32,7 @@ public class [domainName]ServiceImpl implements [domainName]Service {
     private final [domainName]Mapper [domainNameVar]Mapper;
 
 
-    public [domainName]ServiceImpl([domainName]Repository [domainNameVar]Repository, [domainName]Mapper [domainNameVar]Mapper) {
+    public [domainName]Service([domainName]Repository [domainNameVar]Repository, [domainName]Mapper [domainNameVar]Mapper) {
         this.[domainNameVar]Repository = [domainNameVar]Repository;
         this.[domainNameVar]Mapper = [domainNameVar]Mapper;
     }
@@ -45,7 +49,6 @@ public class [domainName]ServiceImpl implements [domainName]Service {
         [domainName] [domainNameVar] = [domainNameVar]Mapper.toEntity([domainNameVar]DTO);
         [domainNameVar] = [domainNameVar]Repository.save([domainNameVar]);
         [domainName]DTO result = [domainNameVar]Mapper.toDto([domainNameVar]);
-        [domainNameVar]SearchRepository.save([domainNameVar]);
         return result;
     }
 
@@ -82,7 +85,7 @@ public class [domainName]ServiceImpl implements [domainName]Service {
     @Transactional(readOnly = true)
     public [domainName]DTO findOne(Long id) {
         log.debug("Request to get [domainName] : {}", id);
-        [domainName] [domainNameVar] = [domainNameVar]Repository.findOne(id);
+        [domainName] [domainNameVar] = [domainNameVar]Repository.findById(id).orElse(null);
         return [domainNameVar]Mapper.toDto([domainNameVar]);
     }
 
@@ -94,7 +97,7 @@ public class [domainName]ServiceImpl implements [domainName]Service {
     
     public void delete(Long id) {
         log.debug("Request to delete [domainName] : {}", id);
-        [domainNameVar]Repository.delete(id);
+        [domainNameVar]Repository.deleteById(id);
     }
 
  

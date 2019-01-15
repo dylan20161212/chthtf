@@ -84,10 +84,11 @@ public class CodeRelation {
 	public String generateDomainCode() {
 		String code = "";
 		String toName = "";
-		if(this.toName == null || this.toName.isEmpty()){
-			toName = this.toEntity.substring(0, 1).toUpperCase()+this.toEntity.substring(1);
+		
+		if(this.fromName == null || this.fromName.isEmpty()){
+			toName = this.toEntity.substring(0, 1).toLowerCase()+this.toEntity.substring(1);
 		}else{
-			toName = this.toName;
+			toName = this.fromName;
 		}
 		if(isManyToOne()){
 			code = "   @ManyToOne \n"+
@@ -173,6 +174,23 @@ public class CodeRelation {
 	public String generateDBScriptCode() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public String generateDomainGetSetCode() {
+		String code = "";
+		String toName = "";
+		if(this.fromName == null || this.fromName.isEmpty()){
+			toName = this.toEntity.substring(0, 1).toLowerCase()+this.toEntity.substring(1);
+		}else{
+			toName = this.fromName;
+		}
+		String methodName= toName.substring(0, 1).toUpperCase()+toName.substring(1);
+		code +=" public "+toEntity+" get"+methodName+" "+"( ){\n"+
+		       "     return this."+toName+"; \n}\n";
+		
+		code+=" public void set"+methodName+"("+toEntity +" "+toName+" ){\n this."+toName+" = "+toName+";\n}\n";
+		
+		return code;
 	}
 
 	

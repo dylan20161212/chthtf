@@ -74,7 +74,7 @@ public class CodeEntityBuildFactory {
 		for (CodeEntity codeEntity : this.codeEntities) {
 			String domainCode = codeEntity.generateDomainCode();
 			System.out.println(domainCode);
-			String fullName = this.getBaseFilePath()+"/domains/"+codeEntity.getName()+".java";
+			String fullName = this.getBaseFilePath()+"/domain/"+codeEntity.getName()+".java";
 			this.writeToFile(fullName, domainCode);
 		}
 	}
@@ -189,7 +189,8 @@ public class CodeEntityBuildFactory {
 	public void genRepository(){
 		for (CodeEntity codeEntity : this.codeEntities) {
 			String code = codeEntity.generateRepositoryCode();
-			System.out.println(code);
+			String fullName = this.getBaseFilePath()+"/repository/"+codeEntity.getName()+"Repository.java";
+			this.writeToFile(fullName, code);
 		}
 	}
 	
@@ -231,9 +232,13 @@ public class CodeEntityBuildFactory {
 	
 	public static void main(String[] args) throws FileNotFoundException, IOException {
 		String jdlFile="D:\\projects\\chthtf\\jdl\\new.jdl";
-		String projectPath="D:\\projects\\chthtf";
+		String projectPath="D:\\projects\\backend\\redapple";
 		String basePackage="com.thtf.app";
-		String templatePath= "D:\\projects\\backend\\redapple\\TPL";
+		String templatePath= "D:\\projects\\chthtf\\TPL";
+		jdlFile = args[0];
+		projectPath = args[1];
+		basePackage = args[2];
+		templatePath =args[3];
 		boolean isGenDBScript = true;
 		boolean isGenDomain = true;
 		boolean isGenRepository = true;

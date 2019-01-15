@@ -456,7 +456,8 @@ public class EntityParser {
 	}
 
 	public static void main(String[] args) throws FileNotFoundException, IOException {
-		String path = "D:\\projects\\chthtf\\jdl\\deconflict.jdl";
+//		String path = "D:\\projects\\chthtf\\jdl\\deconflict.jdl";
+		String path = "D:\\projects\\chthtf\\jdl\\new.jdl";
 		String content = "entity A (t_test) { name String, age Integer }";
 		EntityParser ep = new EntityParser(path);
 		ep.parser();
